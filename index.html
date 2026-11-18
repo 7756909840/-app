@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173d2b">
+<title>Fresh Chicken & Mutton Shop</title>
+<style>
+:root{--green:#173d2b;--green2:#246344;--bg:#f3f6f3;--card:#fff;--text:#17231c;--muted:#68766d;--line:#e1e9e3;--red:#b42318;--gold:#f0b429}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(135deg,var(--green),#2d7650);color:white;padding:18px 16px 15px;position:sticky;top:0;z-index:5;box-shadow:0 2px 12px #173d2b22}
+.brand{font-size:20px;font-weight:800;letter-spacing:.2px}.sub{opacity:.85;font-size:12px;margin-top:3px}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+button,select,input{font:inherit}button{border:0;border-radius:11px;padding:11px 13px;background:var(--green2);color:white;font-weight:650;cursor:pointer}
+button.secondary{background:#e8f0ea;color:var(--green)}button.danger{background:#fff0ef;color:var(--red)}button.small{padding:7px 10px;font-size:12px}
+nav{display:flex;gap:7px;overflow:auto;padding:10px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:74px;z-index:4}
+nav button{white-space:nowrap;background:#edf3ee;color:#294b36;padding:9px 12px;font-size:13px}nav button.active{background:var(--green);color:white}
+main{max-width:900px;margin:auto;padding:14px 12px 90px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;min-height:91px}.stat .label{color:var(--muted);font-size:12px}.stat .value{font-size:22px;font-weight:800;margin-top:5px}.green{color:var(--green2)}.red{color:var(--red)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:15px;margin:12px 0}.card h2{font-size:17px;margin:0 0 12px}.hint{color:var(--muted);font-size:12px;line-height:1.5}
+form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}label{font-size:12px;color:var(--muted);font-weight:650}input,select{width:100%;padding:11px;border:1px solid #cfdad2;border-radius:10px;background:#fff;color:var(--text);min-width:0}input:focus,select:focus{outline:2px solid #b8d8c1;border-color:var(--green2)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}.actions button{flex:1}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-size:11px}td.num,th.num{text-align:right}.tablewrap{overflow:auto}.empty{text-align:center;color:var(--muted);padding:22px 8px}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.pill{font-size:11px;padding:4px 8px;border-radius:20px;background:#eaf3ec;color:var(--green2)}
+.hidden{display:none!important}.section-title{font-size:19px;font-weight:800;margin:4px 0 10px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toolbar input{max-width:180px}.totalbox{background:#f0f6f1;padding:10px;border-radius:10px;font-weight:750}
+.notice{background:#fff8e6;border:1px solid #f3dfaa;padding:11px;border-radius:11px;font-size:12px;line-height:1.5;margin:10px 0}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.card{padding:18px}nav{justify-content:center}}
+</style></head>
+<body>
+<header><div class="toprow"><div><div class="brand">🐔 FRESH CHICKEN & MUTTON SHOP</div><div class="sub">दुकान का रोज़ का हिसाब • गोंदेगाव</div></div><button class="small secondary" id="langBtn">मराठी</button></div></header>
+<nav id="nav">
+<button data-tab="home" class="active">होम</button><button data-tab="purchase">खरीद</button><button data-tab="cutting">कटाई</button><button data-tab="sale">बिक्री</button><button data-tab="udhar">उधारी</button><button data-tab="expense">खर्च</button><button data-tab="report">रिपोर्ट</button><button data-tab="backup">बैकअप</button>
+</nav>
+<main>
+<section id="home" class="page">
+<div class="section-title">आज का हिसाब</div>
+<div class="toolbar"><label for="homeDate">तारीख</label><input type="date" id="homeDate"></div>
+<div class="grid" id="stats"></div>
+<div class="card"><div class="row"><h2>आज की एंट्री</h2><span class="pill" id="todayLabel"></span></div><div id="recent"></div></div>
+<div class="notice">ध्यान दें: यह ऐप आपके इसी मोबाइल/ब्राउज़र में डेटा सेव करता है। मोबाइल का डेटा/ब्राउज़र साफ करने से पहले बैकअप ज़रूर लें।</div>
+</section>
+
+<section id="purchase" class="page hidden">
+<div class="section-title">माल खरीदें / माल आवक</div>
+<div class="card"><h2>खरीद की एंट्री</h2>
+<form id="purchaseForm">
+<div class="field"><label>तारीख</label><input type="date" name="date" required></div>
+<div class="field"><label>माल का प्रकार</label><select name="kind"><option value="chicken">जिंदा चिकन</option><option value="mutton">मटन</option></select></div>
+<div class="field"><label>खरीदा वजन (KG)</label><input type="number" name="qty" min=".01" step=".01" required></div>
+<div class="field"><label>खरीद भाव (₹ / KG)</label><input type="number" name="rate" min="0" step=".01" required></div>
+<div class="field"><label>अतिरिक्त खर्च (₹)</label><input type="number" name="extra" min="0" step=".01" value="0"></div>
+<div class="field"><label>सप्लायर / नोट</label><input name="note" placeholder="नाम या जानकारी"></div>
+<div class="field full totalbox" id="purchaseCalc">कुल खरीद: ₹0.00</div>
+<div class="field full"><button type="submit">खरीद सेव करें</button></div>
+</form></div><div class="card"><h2>खरीद रिकॉर्ड</h2><div id="purchaseList"></div></div>
+</section>
+
+<section id="cutting" class="page hidden">
+<div class="section-title">कटाई / तैयार वजन</div>
+<div class="card"><h2>चिकन कटाई की एंट्री</h2>
+<form id="cutForm">
+<div class="field"><label>तारीख</label><input type="date" name="date" required></div>
+<div class="field"><label>जिंदा चिकन खरीदी (वजन KG)</label><input type="number" name="live" min=".01" step=".01" required></div>
+<div class="field"><label>तैयार माल वजन (KG)</label><input type="number" name="ready" min=".01" step=".01" required></div>
+<div class="field"><label>वेस्टेज / कम वजन (KG)</label><input type="number" name="waste" min="0" step=".01" value="0"></div>
+<div class="field"><label>नोट</label><input name="note" placeholder="वैकल्पिक"></div>
+<div class="field full hint" id="yieldCalc">तैयार वजन का प्रतिशत अपने आप दिखेगा।</div>
+<div class="field full"><button type="submit">कटाई सेव करें और स्टॉक जोड़ें</button></div>
+</form><p class="hint">कटाई एंट्री करते समय खरीदे गए जिंदा चिकन की लागत तैयार वजन पर बांटी जाएगी। स्टॉक में तैयार KG जुड़ेगा।</p></div>
+<div class="card"><h2>कटाई रिकॉर्ड</h2><div id="cutList"></div></div>
+</section>
+
+<section id="sale" class="page hidden">
+<div class="section-title">माल बिक्री</div>
+<div class="card"><h2>बिक्री की एंट्री</h2>
+<form id="saleForm">
+<div class="field"><label>तारीख</label><input type="date" name="date" required></div>
+<div class="field"><label>माल</label><select name="kind"><option value="chicken">चिकन</option><option value="mutton">मटन</option></select></div>
+<div class="field"><label>ग्राहक का नाम</label><input name="customer" placeholder="ग्राहक का नाम" required></div>
+<div class="field"><label>मोबाइल नंबर</label><input name="phone" inputmode="numeric" placeholder="वैकल्पिक"></div>
+<div class="field"><label>बेचा वजन (KG)</label><input type="number" name="qty" min=".01" step=".01" required></div>
+<div class="field"><label>बिक्री भाव (₹ / KG)</label><input type="number" name="rate" min="0" step=".01" required></div>
+<div class="field"><label>अभी मिला पेमेंट (₹)</label><input type="number" name="paid" min="0" step=".01" value="0"></div>
+<div class="field"><label>पेमेंट तरीका</label><select name="method"><option>Cash</option><option>UPI</option><option>अन्य</option></select></div>
+<div class="field full"><label>नोट</label><input name="note" placeholder="वैकल्पिक"></div>
+<div class="field full totalbox" id="saleCalc">कुल: ₹0.00 • बाकी: ₹0.00</div>
+<div class="field full"><button type="submit">बिक्री सेव करें</button></div>
+</form></div><div class="card"><h2>बिक्री रिकॉर्ड</h2><div id="saleList"></div></div>
+</section>
+
+<section id="udhar" class="page hidden">
+<div class="section-title">ग्राहक उधारी</div>
+<div class="card"><h2>पेमेंट प्राप्त करें</h2>
+<form id="paymentForm">
+<div class="field"><label>तारीख</label><input type="date" name="date" required></div>
+<div class="field"><label>ग्राहक</label><input name="customer" list="customerOptions" required placeholder="ग्राहक का नाम"><datalist id="customerOptions"></datalist></div>
+<div class="field"><label>मोबाइल नंबर</label><input name="phone" inputmode="numeric"></div>
+<div class="field"><label>जमा रकम (₹)</label><input type="number" name="amount" min=".01" step=".01" required></div>
+<div class="field"><label>पेमेंट तरीका</label><select name="method"><option>Cash</option><option>UPI</option><option>अन्य</option></select></div>
+<div class="field"><label>नोट</label><input name="note"></div>
+<div class="field full"><button type="submit">पेमेंट सेव करें</button></div>
+</form></div>
+<div class="card"><h2>ग्राहक का बाकी हिसाब</h2><div id="customerList"></div></div>
+</section>
+
+<section id="expense" class="page hidden">
+<div class="section-title">दुकान का खर्च</div>
+<div class="card"><h2>खर्च की एंट्री</h2>
+<form id="expenseForm">
+<div class="field"><label>तारीख</label><input type="date" name="date" required></div>
+<div class="field"><label>खर्च का प्रकार</label><select name="category"><option>भाड़ा</option><option>बिजली</option><option>दुकान किराया</option><option>मजदूरी</option><option>पैकिंग</option><option>अन्य</option></select></div>
+<div class="field"><label>रकम (₹)</label><input type="number" name="amount" min=".01" step=".01" required></div>
+<div class="field"><label>नोट</label><input name="note"></div>
+<div class="field full"><button type="submit">खर्च सेव करें</button></div>
+</form></div><div class="card"><h2>खर्च रिकॉर्ड</h2><div id="expenseList"></div></div>
+</section>
+
+<section id="report" class="page hidden">
+<div class="section-title">रिपोर्ट और मुनाफा</div>
+<div class="card"><div class="toolbar"><div class="field"><label>से</label><input type="date" id="fromDate"></div><div class="field"><label>तक</label><input type="date" id="toDate"></div><button id="runReport">रिपोर्ट देखें</button></div><div id="reportOut"></div></div>
+<div class="notice">मुनाफा अनुमानित है: बिक्री की लागत उपलब्ध खरीद/कटाई की औसत लागत से निकाली जाती है। बचे हुए स्टॉक की लागत, खराब माल और अन्य समायोजन अलग से मिलान करें।</div>
+</section>
+
+<section id="backup" class="page hidden">
+<div class="section-title">डेटा बैकअप</div>
+<div class="card"><h2>डेटा सुरक्षित रखें</h2><p class="hint">बैकअप फाइल मोबाइल में डाउनलोड होगी। नया मोबाइल लेने या ब्राउज़र डेटा मिटने से पहले बैकअप लें।</p><div class="actions"><button id="exportBtn">बैकअप डाउनलोड करें</button><button class="secondary" id="importBtn">बैकअप वापस लाएँ</button><input type="file" id="importFile" accept="application/json" class="hidden"></div></div>
+<div class="card"><h2>डेटा प्रबंधन</h2><p class="hint">डेमो/टेस्ट एंट्री हटाने या नया हिसाब शुरू करने से पहले बैकअप लेना जरूरी है।</p><button class="danger" id="clearBtn">सारा डेटा मिटाएँ</button></div>
+</section>
+<footer>FRESH CHICKEN & MUTTON SHOP • Offline Hisab App</footer>
+</main>
+<script>
+const KEY='fresh_shop_manager_v1';
+const today=()=>new Date().toLocaleDateString('en-CA');
+let db=load(), lang='hi';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{purchases:[],cuts:[],sales:[],payments:[],expenses:[]}}catch(e){return {purchases:[],cuts:[],sales:[],payments:[],expenses:[]}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+const $=s=>document.querySelector(s), money=n=>'₹'+(Number(n)||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}), num=n=>Number(n)||0;
+function setDates(){document.querySelectorAll('input[type=date]').forEach(x=>{if(!x.value)x.value=today()});$('#homeDate').value=today();$('#fromDate').value=today().slice(0,8)+'01';$('#toDate').value=today()}
+function tab(name){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$('#'+name).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));render()}
+$('#nav').addEventListener('click',e=>{let b=e.target.closest('button[data-tab]');if(b)tab(b.dataset.tab)});
+function table(rows,heads){if(!rows.length)return '<div class="empty">अभी कोई एंट्री नहीं है</div>';return '<div class="tablewrap"><table><thead><tr>'+heads.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>'}
+function row(cells){return '<tr>'+cells.map((c,i)=>'<td class="'+(i?'num':'')+'">'+c+'</td>').join('')+'</tr>'}
+function kindName(k){return k==='chicken'?'चिकन':'मटन'}
+function totals(date){let sales=db.sales.filter(x=>x.date===date), purchases=db.purchases.filter(x=>x.date===date), expenses=db.expenses.filter(x=>x.date===date), payments=db.payments.filter(x=>x.date===date);
+return {sale:sales.reduce((a,x)=>a+x.total,0), purchase:purchases.reduce((a,x)=>a+x.total,0), cash:sales.reduce((a,x)=>a+x.paid,0)+payments.filter(x=>x.method==='Cash').reduce((a,x)=>a+x.amount,0), upi:sales.filter(x=>x.method==='UPI').reduce((a,x)=>a+x.paid,0)+payments.filter(x=>x.method==='UPI').reduce((a,x)=>a+x.amount,0), expense:expenses.reduce((a,x)=>a+x.amount,0),due:sales.reduce((a,x)=>a+x.due,0)}}
+function stock(k){let p=db.purchases.filter(x=>x.kind===k).reduce((a,x)=>a+(k==='chicken'?0:x.qty),0);let c=k==='chicken'?db.cuts.reduce((a,x)=>a+x.ready,0):0;let sold=db.sales.filter(x=>x.kind===k).reduce((a,x)=>a+x.qty,0);return (k==='chicken'?c:p)-sold}
+function renderHome(){let d=$('#homeDate').value||today(),t=totals(d), due=customerBalances().reduce((a,x)=>a+x.balance,0);
+$('#todayLabel').textContent=d;
+let stats=[['आज की बिक्री',money(t.sale)],['आज की खरीद',money(t.purchase)],['कैश + UPI मिला',money(t.cash+t.upi)],['आज का खर्च',money(t.expense)],['आज की नई उधारी',money(t.due)],['कुल बाकी उधारी',money(due)],['चिकन स्टॉक',num(stock('chicken')).toFixed(2)+' KG'],['मटन स्टॉक',num(stock('mutton')).toFixed(2)+' KG']];
+$('#stats').innerHTML=stats.map((x,i)=>'<div class="stat"><div class="label">'+x[0]+'</div><div class="value '+(i===5?'red':'')+'">'+x[1]+'</div></div>').join('');
+let recent=[...db.sales.map(x=>({date:x.date,label:'बिक्री • '+x.customer,amount:x.total})),...db.purchases.map(x=>({date:x.date,label:'खरीद • '+kindName(x.kind),amount:x.total})),...db.expenses.map(x=>({date:x.date,label:'खर्च • '+x.category,amount:x.amount}))].filter(x=>x.date===d).slice(-8).reverse();
+$('#recent').innerHTML=recent.length?table(recent.map(x=>row([x.label,money(x.amount)])),['विवरण','रकम']):'<div class="empty">इस तारीख की एंट्री नहीं है</div>'}
+function renderLists(){
+$('#purchaseList').innerHTML=table(db.purchases.slice().reverse().map(x=>row([x.date,kindName(x.kind)+' • '+x.qty+' KG',money(x.total)])),['तारीख','माल / वजन','कुल']);
+$('#cutList').innerHTML=table(db.cuts.slice().reverse().map(x=>row([x.date,x.live+' KG',x.ready+' KG',x.yield.toFixed(1)+'%'])),['तारीख','जिंदा','तैयार','यील्ड']);
+$('#saleList').innerHTML=table(db.sales.slice().reverse().map(x=>row([x.date,x.customer+' • '+kindName(x.kind),x.qty+' KG',money(x.total),money(x.due)])),['तारीख','ग्राहक','वजन','कुल','बाकी']);
+$('#expenseList').innerHTML=table(db.expenses.slice().reverse().map(x=>row([x.date,x.category+' '+(x.note||''),money(x.amount)])),['तारीख','विवरण','रकम']);
+}
+function customerBalances(){let names=new Set([...db.sales.map(x=>x.customer),...db.payments.map(x=>x.customer)]);return [...names].map(name=>{let s=db.sales.filter(x=>x.customer===name),p=db.payments.filter(x=>x.customer===name);let sold=s.reduce((a,x)=>a+x.total,0),paid=s.reduce((a,x)=>a+x.paid,0)+p.reduce((a,x)=>a+x.amount,0);return {name,phone:(s.find(x=>x.phone)?.phone||p.find(x=>x.phone)?.phone||''),sold,paid,balance:sold-paid}}).filter(x=>Math.abs(x.balance)>.001).sort((a,b)=>b.balance-a.balance)}
+function renderCustomers(){let cs=customerBalances();$('#customerList').innerHTML=table(cs.map(x=>row([x.name+(x.phone?'<br><small>'+x.phone+'</small>':''),money(x.sold),money(x.paid),'<b>'+money(x.balance)+'</b>'])),['ग्राहक','कुल खरीद','जमा','बाकी']);$('#customerOptions').innerHTML=[...new Set([...db.sales.map(x=>x.customer),...db.payments.map(x=>x.customer)])].map(x=>'<option value="'+esc(x)+'">').join('')}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderReport(){let a=$('#fromDate').value,b=$('#toDate').value;if(!a||!b)return;let between=x=>x>=a&&x<=b, sales=db.sales.filter(x=>between(x.date)), pur=db.purchases.filter(x=>between(x.date)), exp=db.expenses.filter(x=>between(x.date)), pays=db.payments.filter(x=>between(x.date));let revenue=sales.reduce((s,x)=>s+x.total,0),buy=pur.reduce((s,x)=>s+x.total,0),cost=sales.reduce((s,x)=>s+x.cost,0),expenses=exp.reduce((s,x)=>s+x.amount,0),gross=revenue-cost,net=gross-expenses;
+$('#reportOut').innerHTML='<div class="grid" style="margin-top:14px">'+[['कुल बिक्री',money(revenue)],['खरीद',money(buy)],['बेचे माल की अनुमानित लागत',money(cost)],['सकल मुनाफा',money(gross)],['अन्य खर्च',money(expenses)],['अनुमानित शुद्ध मुनाफा',money(net)],['बिक्री से बाकी',money(sales.reduce((s,x)=>s+x.due,0))],['उधारी पेमेंट मिला',money(pays.reduce((s,x)=>s+x.amount,0))]].map(x=>'<div class="stat"><div class="label">'+x[0]+'</div><div class="value">'+x[1]+'</div></div>').join('')+'</div><div class="card"><h2>माल के हिसाब से बिक्री</h2>'+table(['chicken','mutton'].map(k=>{let z=sales.filter(x=>x.kind===k);return row([kindName(k),z.reduce((s,x)=>s+x.qty,0).toFixed(2)+' KG',money(z.reduce((s,x)=>s+x.total,0))])}),['माल','वजन','रकम'])+'</div>'}
+function render(){if($('#home').classList.contains('hidden')===false)renderHome();renderLists();renderCustomers();if(!$('#report').classList.contains('hidden'))renderReport()}
+function formData(f){return Object.fromEntries(new FormData(f).entries())}
+function resetForm(f){f.reset();let d=f.querySelector('[type=date]');if(d)d.value=today()}
+function bindCalc(){
+$('#purchaseForm').addEventListener('input',()=>{let f=formData($('#purchaseForm'));$('#purchaseCalc').textContent='कुल खरीद: '+money(num(f.qty)*num(f.rate)+num(f.extra))});
+$('#saleForm').addEventListener('input',()=>{let f=formData($('#saleForm')),total=num(f.qty)*num(f.rate);$('#saleCalc').textContent='कुल: '+money(total)+' • बाकी: '+money(Math.max(0,total-num(f.paid)))});
+$('#cutForm').addEventListener('input',()=>{let f=formData($('#cutForm'));$('#yieldCalc').textContent='तैयार वजन: '+(num(f.live)?(num(f.ready)/num(f.live)*100).toFixed(1):0)+'% • वजन कम: '+Math.max(0,num(f.live)-num(f.ready)).toFixed(2)+' KG'});
+}
+$('#purchaseForm').addEventListener('submit',e=>{e.preventDefault();let f=formData(e.target),qty=num(f.qty),rate=num(f.rate),extra=num(f.extra);db.purchases.push({id:crypto.randomUUID(),date:f.date,kind:f.kind,qty,rate,extra,total:qty*rate+extra,note:f.note});save();resetForm(e.target);render();alert('खरीद सेव हो गई। चिकन के लिए कटाई एंट्री भी करें।')});
+$('#cutForm').addEventListener('submit',e=>{e.preventDefault();let f=formData(e.target),live=num(f.live),ready=num(f.ready);if(ready>live){alert('तैयार वजन जिंदा वजन से ज्यादा नहीं हो सकता।');return}let available=db.purchases.filter(x=>x.kind==='chicken').reduce((s,x)=>s+x.qty,0)-db.cuts.reduce((s,x)=>s+x.live,0);if(live>available+.001){if(!confirm('खरीद रिकॉर्ड के हिसाब से इतना जिंदा चिकन उपलब्ध नहीं है। फिर भी सेव करें?'))return}db.cuts.push({id:crypto.randomUUID(),date:f.date,live,ready,waste:num(f.waste)||Math.max(0,live-ready),yield:live?ready/live*100:0,note:f.note});save();resetForm(e.target);render();alert('कटाई सेव हुई और तैयार वजन स्टॉक में जुड़ गया।')});
+$('#saleForm').addEventListener('submit',e=>{e.preventDefault();let f=formData(e.target),qty=num(f.qty),rate=num(f.rate),total=qty*rate,paid=num(f.paid);if(paid>total){alert('मिला पेमेंट कुल रकम से ज्यादा है।');return}let available=stock(f.kind);if(qty>available+.001&&!confirm('स्टॉक कम दिख रहा है ('+available.toFixed(2)+' KG)। फिर भी बिक्री सेव करें?'))return;
+let costPer=0;if(f.kind==='chicken'){let c=db.cuts.filter(x=>x.ready>0),liveCost=db.purchases.filter(x=>x.kind==='chicken').reduce((s,x)=>s+x.total,0),ready=c.reduce((s,x)=>s+x.ready,0);costPer=ready?liveCost/ready:0}else{let ps=db.purchases.filter(x=>x.kind==='mutton'),q=ps.reduce((s,x)=>s+x.qty,0),v=ps.reduce((s,x)=>s+x.total,0);costPer=q?v/q:0}
+db.sales.push({id:crypto.randomUUID(),date:f.date,kind:f.kind,customer:f.customer.trim(),phone:f.phone,qty,rate,total,paid,due:total-paid,method:f.method,note:f.note,cost:qty*costPer});save();resetForm(e.target);render();alert('बिक्री सेव हो गई। बाकी रकम ग्राहक की उधारी में जुड़ गई।')});
+$('#paymentForm').addEventListener('submit',e=>{e.preventDefault();let f=formData(e.target);db.payments.push({id:crypto.randomUUID(),...f,amount:num(f.amount)});save();resetForm(e.target);render();alert('पेमेंट सेव हो गया।')});
+$('#expenseForm').addEventListener('submit',e=>{e.preventDefault();let f=formData(e.target);db.expenses.push({id:crypto.randomUUID(),...f,amount:num(f.amount)});save();resetForm(e.target);render();alert('खर्च सेव हो गया।')});
+$('#homeDate').addEventListener('change',renderHome);$('#runReport').addEventListener('click',renderReport);
+$('#exportBtn').addEventListener('click',()=>{let blob=new Blob([JSON.stringify({app:'Fresh Shop Manager',version:1,exported:new Date().toISOString(),data:db},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fresh-shop-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)});
+$('#importBtn').addEventListener('click',()=>$('#importFile').click());
+$('#importFile').addEventListener('change',async e=>{let file=e.target.files[0];if(!file)return;try{let j=JSON.parse(await file.text()),d=j.data||j;if(!['purchases','cuts','sales','payments','expenses'].every(k=>Array.isArray(d[k])))throw Error();if(!confirm('मौजूदा डेटा की जगह बैकअप का डेटा आएगा। जारी रखें?'))return;db=d;save();render();alert('बैकअप वापस आ गया।')}catch(err){alert('यह सही बैकअप फाइल नहीं है।')}e.target.value=''});
+$('#clearBtn').addEventListener('click',()=>{if(confirm('क्या आप सच में पूरा हिसाब मिटाना चाहते हैं? पहले बैकअप लें।')&&confirm('आखिरी पुष्टि: सारा डेटा हमेशा के लिए हट जाएगा।')){db={purchases:[],cuts:[],sales:[],payments:[],expenses:[]};save();render();alert('डेटा मिटा दिया गया।')}});
+$('#langBtn').addEventListener('click',()=>{lang=lang==='hi'?'mr':'hi';alert(lang==='mr'?'मराठी भाषा मोड पुढील आवृत्तीत पूर्ण केला जाईल. सध्या नोंदी आणि गणना उपलब्ध आहेत.':'हिंदी मोड चालू है।')});
+setDates();bindCalc();render();
+</script></body></html>
